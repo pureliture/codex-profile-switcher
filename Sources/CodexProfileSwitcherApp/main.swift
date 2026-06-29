@@ -310,7 +310,7 @@ final class ProfilePanelView: NSView {
         view.addSubview(label(profile.label, x: 24, y: 18, width: 230, height: 22, size: 17, weight: .bold, color: PanelPalette.text))
         view.addSubview(label(profile.email ?? (profile.isActive ? "Local profile · active auth" : "Ready to switch"), x: 24, y: 44, width: 286, height: 18, size: 12, weight: .medium, color: PanelPalette.muted))
         if profile.isActive {
-            view.addSubview(PillView(text: "Active", frame: NSRect(x: 338, y: 18, width: 64, height: 24), fill: PanelPalette.successFill, textColor: PanelPalette.successText))
+            view.addSubview(PillView(text: "Active", frame: NSRect(x: 338, y: 27, width: 64, height: 24), fill: PanelPalette.successFill, textColor: PanelPalette.successText))
         } else {
             let button = StyledButton(title: "Switch", style: .primary, target: target, action: #selector(AppDelegate.switchProfile(_:)))
             button.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
@@ -393,18 +393,16 @@ final class CardView: NSView {
 }
 
 final class PillView: NSView {
+    private let text: String
+    private let fill: NSColor
+    private let textColor: NSColor
+
     init(text: String, frame: NSRect, fill: NSColor, textColor: NSColor) {
+        self.text = text
+        self.fill = fill
+        self.textColor = textColor
         super.init(frame: frame)
         wantsLayer = true
-        layer?.cornerRadius = frame.height / 2
-        layer?.backgroundColor = fill.cgColor
-
-        let label = NSTextField(labelWithString: text)
-        label.frame = bounds
-        label.alignment = .center
-        label.font = .systemFont(ofSize: 11, weight: .bold)
-        label.textColor = textColor
-        addSubview(label)
     }
 
     required init?(coder: NSCoder) {
@@ -413,6 +411,29 @@ final class PillView: NSView {
 
     override var isFlipped: Bool {
         true
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        fill.setFill()
+        NSBezierPath(roundedRect: bounds, xRadius: bounds.height / 2, yRadius: bounds.height / 2).fill()
+
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        let font = NSFont.systemFont(ofSize: 11, weight: .bold)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: font,
+            .foregroundColor: textColor,
+            .paragraphStyle: paragraph
+        ]
+        let attributedText = NSAttributedString(string: text, attributes: attributes)
+        let textHeight = ceil(attributedText.size().height)
+        let textRect = NSRect(
+            x: 0,
+            y: floor((bounds.height - textHeight) / 2),
+            width: bounds.width,
+            height: textHeight
+        )
+        attributedText.draw(in: textRect)
     }
 }
 

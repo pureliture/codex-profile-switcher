@@ -49,8 +49,8 @@
   <rect class="active" x="246" y="218" width="428" height="78" rx="12"/>
   <text class="label" x="268" y="250">Personal</text>
   <text class="small" x="268" y="273">Local profile · active auth</text>
-  <rect class="pill" x="584" y="236" width="64" height="24" rx="12"/>
-  <text class="pillText" x="600" y="253">Active</text>
+  <rect class="pill" x="584" y="245" width="64" height="24" rx="12"/>
+  <text class="pillText" x="616" y="257" text-anchor="middle" dominant-baseline="middle">Active</text>
 
   <rect class="card" x="246" y="314" width="428" height="78" rx="12"/>
   <text class="label" x="268" y="346">Enterprise</text>
