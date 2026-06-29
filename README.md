@@ -137,15 +137,15 @@ switch는 shared-state baseline capture, target validation, backup, atomic repla
 
 권장 방식은 source-first입니다.
 
-팀원이 직접 빌드해서 사용합니다.
+팀원이 직접 설치해서 사용합니다.
 
 ```sh
 git clone <repo-url>
 cd codex-profile-switcher
-./script/build_and_run.sh --verify
+bash scripts/install-app.sh
 ```
 
-앱을 실행하면 profile panel이 바로 열립니다. 이후에는 macOS menu bar의 Codex Profile Switcher 아이콘으로 다시 열 수 있습니다. 각 팀원은 자기 Mac에서 직접 profile을 추가합니다.
+이 명령은 앱을 빌드한 뒤 `~/Applications/Codex Profile Switcher.app`에 설치하고 바로 실행합니다. 앱을 실행하면 profile panel이 바로 열립니다. 이후에는 macOS menu bar의 Codex Profile Switcher 아이콘으로 다시 열 수 있습니다. 각 팀원은 자기 Mac에서 직접 profile을 추가합니다.
 
 1. `Add Profile`
 2. 개인 계정으로 Codex login
@@ -185,6 +185,24 @@ bash scripts/build-app.sh
 
 ```text
 .build/artifacts/Codex Profile Switcher.app
+```
+
+로컬 설치:
+
+```sh
+bash scripts/install-app.sh
+```
+
+기본 설치 위치:
+
+```text
+~/Applications/Codex Profile Switcher.app
+```
+
+`/Applications`에 설치하고 싶으면 다음처럼 실행합니다.
+
+```sh
+INSTALL_DIR=/Applications bash scripts/install-app.sh
 ```
 
 로컬 build/run smoke test:
