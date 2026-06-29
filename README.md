@@ -193,7 +193,7 @@ bash scripts/build-app.sh
 ./script/build_and_run.sh --verify
 ```
 
-이 명령은 `dist/Codex Profile Switcher.app`을 만들고, 실제 macOS app bundle로 실행한 뒤 process가 떠 있는지 확인합니다.
+이 명령은 `.build/run-artifacts/Codex Profile Switcher.app`을 만들고, 실제 macOS app bundle로 실행한 뒤 process가 떠 있는지 확인합니다.
 
 ## 배포 방식
 

@@ -8,24 +8,44 @@ BUNDLE_ID="dev.pureliture.codex-profile-switcher"
 MIN_SYSTEM_VERSION="13.0"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DIST_DIR="$ROOT_DIR/dist"
-APP_BUNDLE="$DIST_DIR/$APP_NAME.app"
+RUN_ARTIFACTS_DIR="$ROOT_DIR/.build/run-artifacts"
+APP_BUNDLE="$RUN_ARTIFACTS_DIR/$APP_NAME.app"
 APP_CONTENTS="$APP_BUNDLE/Contents"
 APP_MACOS="$APP_CONTENTS/MacOS"
 APP_BINARY="$APP_MACOS/$APP_NAME"
+APP_RESOURCES="$APP_CONTENTS/Resources"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
+ICON_NAME="AppIcon"
+ICON_SOURCE="$ROOT_DIR/assets/app-icon.svg"
 
 cd "$ROOT_DIR"
 
+osascript -e "tell application id \"$BUNDLE_ID\" to quit" >/dev/null 2>&1 || true
+sleep 1
 pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 
 swift build --product "$PRODUCT"
 BUILD_BINARY="$(swift build --show-bin-path)/$PRODUCT"
 
 rm -rf "$APP_BUNDLE"
-mkdir -p "$APP_MACOS" "$APP_CONTENTS/Resources"
+mkdir -p "$APP_MACOS" "$APP_RESOURCES"
 cp "$BUILD_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
+
+make_icon() {
+  local iconset="$APP_RESOURCES/$ICON_NAME.iconset"
+  rm -rf "$iconset"
+  mkdir -p "$iconset"
+  for size in 16 32 128 256 512; do
+    sips -s format png -z "$size" "$size" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}.png" >/dev/null
+    local double=$((size * 2))
+    sips -s format png -z "$double" "$double" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
+  done
+  iconutil -c icns "$iconset" -o "$APP_RESOURCES/$ICON_NAME.icns"
+  rm -rf "$iconset"
+}
+
+make_icon
 
 cat >"$INFO_PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -40,6 +60,8 @@ cat >"$INFO_PLIST" <<PLIST
   <string>$APP_NAME</string>
   <key>CFBundleDisplayName</key>
   <string>$APP_NAME</string>
+  <key>CFBundleIconFile</key>
+  <string>$ICON_NAME</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>LSMinimumSystemVersion</key>
@@ -57,7 +79,7 @@ PLIST
 codesign --force --deep --options runtime --sign - "$APP_BUNDLE" >/dev/null
 
 open_app() {
-  /usr/bin/open -n "$APP_BUNDLE"
+  /usr/bin/open "$APP_BUNDLE"
 }
 
 case "$MODE" in
