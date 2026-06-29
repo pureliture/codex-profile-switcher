@@ -10,6 +10,7 @@ app.run()
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var panel: NSPanel?
+    private var didPlacePanel = false
     private lazy var paths = AppPaths()
     private lazy var store = ProfileStore(appStateRoot: paths.appStateRoot)
 
@@ -22,11 +23,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.button?.action = #selector(togglePanel)
         statusItem = item
         rebuildMenu()
-        DispatchQueue.main.async { self.showPanel() }
+        DispatchQueue.main.async { self.showPanel(placement: .centered) }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        showPanel()
+        showPanel(placement: .centered)
         return false
     }
 
@@ -72,15 +73,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             panel?.orderOut(nil)
             return
         }
-        showPanel()
+        showPanel(placement: .statusItem)
     }
 
-    private func showPanel() {
+    private func showPanel(placement: PanelPlacement) {
         let panel = panel ?? makePanel()
         self.panel = panel
         panel.contentView = ProfilePanelView(state: panelState(), target: self)
-        position(panel)
-        panel.orderFrontRegardless()
+        if didPlacePanel {
+            keepVisible(panel)
+        } else {
+            position(panel, placement: placement)
+            didPlacePanel = true
+        }
+        panel.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 
@@ -98,29 +104,72 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func makePanel() -> NSPanel {
         let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 320),
-            styleMask: [.borderless, .nonactivatingPanel],
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 360),
+            styleMask: [.titled, .closable, .utilityWindow],
             backing: .buffered,
             defer: false
         )
-        panel.backgroundColor = .clear
-        panel.isOpaque = false
+        panel.title = "Codex Profile Switcher"
+        panel.backgroundColor = .windowBackgroundColor
+        panel.isOpaque = true
         panel.hasShadow = true
-        panel.level = .statusBar
-        panel.collectionBehavior = [.canJoinAllSpaces, .transient]
+        panel.isMovable = true
+        panel.isMovableByWindowBackground = true
+        panel.hidesOnDeactivate = false
+        panel.isReleasedWhenClosed = false
+        panel.level = .floating
+        panel.collectionBehavior = [.moveToActiveSpace]
         return panel
     }
 
-    private func position(_ panel: NSPanel) {
-        guard let button = statusItem?.button, let window = button.window else {
-            if let screen = NSScreen.main {
-                let frame = screen.visibleFrame
-                panel.setFrameOrigin(NSPoint(x: frame.maxX - panel.frame.width - 18, y: frame.maxY - panel.frame.height - 18))
+    private func position(_ panel: NSPanel, placement: PanelPlacement) {
+        let screenFrame = screenFrame(for: panel)
+        let proposedOrigin: NSPoint
+        switch placement {
+        case .centered:
+            proposedOrigin = NSPoint(
+                x: screenFrame.midX - panel.frame.width / 2,
+                y: screenFrame.midY - panel.frame.height / 2
+            )
+        case .statusItem:
+            if let button = statusItem?.button, let window = button.window {
+                let rect = window.convertToScreen(button.convert(button.bounds, to: nil))
+                proposedOrigin = NSPoint(
+                    x: rect.midX - panel.frame.width / 2,
+                    y: rect.minY - panel.frame.height - 10
+                )
+            } else {
+                proposedOrigin = NSPoint(
+                    x: screenFrame.midX - panel.frame.width / 2,
+                    y: screenFrame.midY - panel.frame.height / 2
+                )
             }
-            return
         }
-        let rect = window.convertToScreen(button.convert(button.bounds, to: nil))
-        panel.setFrameOrigin(NSPoint(x: rect.midX - panel.frame.width / 2, y: rect.minY - panel.frame.height - 10))
+        panel.setFrameOrigin(clamped(origin: proposedOrigin, panelSize: panel.frame.size, screenFrame: screenFrame))
+    }
+
+    private func keepVisible(_ panel: NSPanel) {
+        let origin = clamped(origin: panel.frame.origin, panelSize: panel.frame.size, screenFrame: screenFrame(for: panel))
+        panel.setFrameOrigin(origin)
+    }
+
+    private func screenFrame(for panel: NSPanel) -> NSRect {
+        if let screen = panel.screen ?? statusItem?.button?.window?.screen ?? NSScreen.main {
+            return screen.visibleFrame
+        }
+        return NSRect(x: 0, y: 0, width: 1200, height: 800)
+    }
+
+    private func clamped(origin: NSPoint, panelSize: NSSize, screenFrame: NSRect) -> NSPoint {
+        let padding: CGFloat = 12
+        let minX = screenFrame.minX + padding
+        let maxX = screenFrame.maxX - panelSize.width - padding
+        let minY = screenFrame.minY + padding
+        let maxY = screenFrame.maxY - panelSize.height - padding
+        return NSPoint(
+            x: min(max(origin.x, minX), maxX),
+            y: min(max(origin.y, minY), maxY)
+        )
     }
 
     @objc fileprivate func addProfile() {
@@ -195,6 +244,11 @@ struct AppPaths {
     var codexHome: URL { home.appendingPathComponent(".codex") }
 }
 
+private enum PanelPlacement {
+    case centered
+    case statusItem
+}
+
 final class ProfilePanelView: NSView {
     private let state: PanelState
     private weak var target: AppDelegate?
@@ -202,9 +256,8 @@ final class ProfilePanelView: NSView {
     init(state: PanelState, target: AppDelegate) {
         self.state = state
         self.target = target
-        super.init(frame: NSRect(x: 0, y: 0, width: 420, height: 320))
+        super.init(frame: NSRect(x: 0, y: 0, width: 480, height: 360))
         wantsLayer = true
-        layer?.cornerRadius = 18
         layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         build()
     }
@@ -213,9 +266,17 @@ final class ProfilePanelView: NSView {
         nil
     }
 
+    override var mouseDownCanMoveWindow: Bool {
+        true
+    }
+
+    override var isFlipped: Bool {
+        true
+    }
+
     private func build() {
-        add(label("Codex Profiles", x: 22, y: 22, width: 240, size: 22, weight: .semibold))
-        add(label("Only auth.json changes. Config, sessions, MCP, and skills stay shared.", x: 22, y: 50, width: 360, size: 11, weight: .regular, color: .secondaryLabelColor))
+        add(label("Codex Profiles", x: 24, y: 24, width: 260, height: 28, size: 22, weight: .semibold))
+        add(label("Only auth.json changes. Config, sessions, MCP, and skills stay shared.", x: 24, y: 56, width: 420, height: 34, size: 12, weight: .regular, color: .secondaryLabelColor, lines: 2))
 
         if state.profiles.isEmpty {
             add(emptyCard())
@@ -227,38 +288,38 @@ final class ProfilePanelView: NSView {
         }
 
         let addButton = NSButton(title: "Add Profile", target: target, action: #selector(AppDelegate.addProfile))
-        addButton.frame = NSRect(x: 22, y: 270, width: 110, height: 28)
+        addButton.frame = NSRect(x: 24, y: 306, width: 116, height: 28)
         add(addButton)
 
         let closeButton = NSButton(title: "Close", target: self, action: #selector(close))
-        closeButton.frame = NSRect(x: 320, y: 270, width: 76, height: 28)
+        closeButton.frame = NSRect(x: 380, y: 306, width: 76, height: 28)
         add(closeButton)
     }
 
     private func emptyCard() -> NSView {
-        let view = rounded(frame: NSRect(x: 22, y: 92, width: 376, height: 150), active: false)
-        view.addSubview(label("No profiles yet", x: 20, y: 22, width: 220, size: 17, weight: .semibold))
-        view.addSubview(label("Add a profile with Codex official login.", x: 20, y: 52, width: 280, size: 12, weight: .regular, color: .secondaryLabelColor))
+        let view = rounded(frame: NSRect(x: 24, y: 118, width: 432, height: 154), active: false)
+        view.addSubview(label("No profiles yet", x: 20, y: 24, width: 220, height: 24, size: 17, weight: .semibold))
+        view.addSubview(label("Add a profile with Codex official login.", x: 20, y: 58, width: 320, height: 20, size: 12, weight: .regular, color: .secondaryLabelColor))
         return view
     }
 
     private func profileCard(_ profile: ProfileSummary, index: Int) -> NSView {
         let column = index % 2
         let row = index / 2
-        let frame = NSRect(x: 22 + column * 192, y: 92 + row * 84, width: 180, height: 74)
+        let frame = NSRect(x: 24 + column * 220, y: 112 + row * 88, width: 204, height: 76)
         let view = rounded(frame: frame, active: profile.isActive)
-        view.addSubview(label(profile.label, x: 14, y: 12, width: 120, size: 16, weight: .semibold))
-        view.addSubview(label(profile.email ?? "Local profile", x: 14, y: 36, width: 140, size: 10, weight: .regular, color: .secondaryLabelColor))
+        view.addSubview(label(profile.label, x: 14, y: 12, width: 128, height: 22, size: 16, weight: .semibold))
+        view.addSubview(label(profile.email ?? "Local profile", x: 14, y: 38, width: 160, height: 18, size: 10, weight: .regular, color: .secondaryLabelColor))
         let button = NSButton(title: profile.isActive ? "Active" : "Switch", target: target, action: #selector(AppDelegate.switchProfile(_:)))
         button.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
         button.isEnabled = !profile.isActive
-        button.frame = NSRect(x: 94, y: 44, width: 72, height: 24)
+        button.frame = NSRect(x: 118, y: 44, width: 72, height: 24)
         view.addSubview(button)
         return view
     }
 
     private func rounded(frame: NSRect, active: Bool) -> NSView {
-        let view = NSView(frame: frame)
+        let view = FlippedRoundedView(frame: frame)
         view.wantsLayer = true
         view.layer?.cornerRadius = 10
         view.layer?.borderWidth = 1
@@ -267,11 +328,13 @@ final class ProfilePanelView: NSView {
         return view
     }
 
-    private func label(_ text: String, x: CGFloat, y: CGFloat, width: CGFloat, size: CGFloat, weight: NSFont.Weight, color: NSColor = .labelColor) -> NSTextField {
+    private func label(_ text: String, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, size: CGFloat, weight: NSFont.Weight, color: NSColor = .labelColor, lines: Int = 1) -> NSTextField {
         let field = NSTextField(labelWithString: text)
-        field.frame = NSRect(x: x, y: y, width: width, height: 22)
+        field.frame = NSRect(x: x, y: y, width: width, height: height)
         field.font = .systemFont(ofSize: size, weight: weight)
         field.textColor = color
+        field.maximumNumberOfLines = lines
+        field.lineBreakMode = .byWordWrapping
         return field
     }
 
@@ -281,6 +344,16 @@ final class ProfilePanelView: NSView {
 
     @objc private func close() {
         window?.orderOut(nil)
+    }
+}
+
+final class FlippedRoundedView: NSView {
+    override var isFlipped: Bool {
+        true
+    }
+
+    override var mouseDownCanMoveWindow: Bool {
+        true
     }
 }
 
