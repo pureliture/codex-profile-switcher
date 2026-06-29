@@ -105,12 +105,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func makePanel() -> NSPanel {
         let panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 480, height: 360),
-            styleMask: [.titled, .closable, .utilityWindow],
+            styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
         )
         panel.title = "Codex Profile Switcher"
-        panel.backgroundColor = .windowBackgroundColor
+        panel.backgroundColor = PanelPalette.background
         panel.isOpaque = true
         panel.hasShadow = true
         panel.isMovable = true
@@ -258,7 +258,7 @@ final class ProfilePanelView: NSView {
         self.target = target
         super.init(frame: NSRect(x: 0, y: 0, width: 480, height: 360))
         wantsLayer = true
-        layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        layer?.backgroundColor = PanelPalette.background.cgColor
         build()
     }
 
@@ -275,57 +275,58 @@ final class ProfilePanelView: NSView {
     }
 
     private func build() {
-        add(label("Codex Profiles", x: 24, y: 24, width: 260, height: 28, size: 22, weight: .semibold))
-        add(label("Only auth.json changes. Config, sessions, MCP, and skills stay shared.", x: 24, y: 56, width: 420, height: 34, size: 12, weight: .regular, color: .secondaryLabelColor, lines: 2))
+        add(label("Codex Profiles", x: 26, y: 24, width: 260, height: 28, size: 22, weight: .bold, color: PanelPalette.text))
+        add(label("Only auth.json changes. Shared Codex state stays untouched.", x: 26, y: 58, width: 420, height: 20, size: 12, weight: .medium, color: PanelPalette.muted))
 
         if state.profiles.isEmpty {
             add(emptyCard())
         } else {
-            let cards = Array(state.profiles.prefix(4))
+            let cards = Array(state.profiles.prefix(2))
             for (index, profile) in cards.enumerated() {
                 add(profileCard(profile, index: index))
             }
         }
 
-        let addButton = NSButton(title: "Add Profile", target: target, action: #selector(AppDelegate.addProfile))
+        let addButton = StyledButton(title: "Add Profile", style: .secondary, target: target, action: #selector(AppDelegate.addProfile))
         addButton.frame = NSRect(x: 24, y: 306, width: 116, height: 28)
         add(addButton)
 
-        let closeButton = NSButton(title: "Close", target: self, action: #selector(close))
+        let closeButton = StyledButton(title: "Close", style: .secondary, target: self, action: #selector(close))
         closeButton.frame = NSRect(x: 380, y: 306, width: 76, height: 28)
         add(closeButton)
     }
 
     private func emptyCard() -> NSView {
-        let view = rounded(frame: NSRect(x: 24, y: 118, width: 432, height: 154), active: false)
-        view.addSubview(label("No profiles yet", x: 20, y: 24, width: 220, height: 24, size: 17, weight: .semibold))
-        view.addSubview(label("Add a profile with Codex official login.", x: 20, y: 58, width: 320, height: 20, size: 12, weight: .regular, color: .secondaryLabelColor))
+        let view = rounded(frame: NSRect(x: 26, y: 112, width: 428, height: 170), active: false)
+        view.addSubview(label("No profiles yet", x: 24, y: 28, width: 220, height: 24, size: 18, weight: .bold, color: PanelPalette.text))
+        view.addSubview(label("Add Personal and Enterprise profiles with official Codex login.", x: 24, y: 62, width: 314, height: 38, size: 12, weight: .medium, color: PanelPalette.muted, lines: 2))
+        view.addSubview(PillView(text: "auth.json only", frame: NSRect(x: 24, y: 116, width: 112, height: 26), fill: PanelPalette.activeFill, textColor: PanelPalette.blue))
         return view
     }
 
     private func profileCard(_ profile: ProfileSummary, index: Int) -> NSView {
-        let column = index % 2
-        let row = index / 2
-        let frame = NSRect(x: 24 + column * 220, y: 112 + row * 88, width: 204, height: 76)
+        let frame = NSRect(x: 26, y: 112 + index * 92, width: 428, height: 78)
         let view = rounded(frame: frame, active: profile.isActive)
-        view.addSubview(label(profile.label, x: 14, y: 12, width: 128, height: 22, size: 16, weight: .semibold))
-        view.addSubview(label(profile.email ?? "Local profile", x: 14, y: 38, width: 160, height: 18, size: 10, weight: .regular, color: .secondaryLabelColor))
-        let button = NSButton(title: profile.isActive ? "Active" : "Switch", target: target, action: #selector(AppDelegate.switchProfile(_:)))
-        button.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
-        button.isEnabled = !profile.isActive
-        button.frame = NSRect(x: 118, y: 44, width: 72, height: 24)
-        view.addSubview(button)
+        view.addSubview(label(profile.label, x: 24, y: 18, width: 230, height: 22, size: 17, weight: .bold, color: PanelPalette.text))
+        view.addSubview(label(profile.email ?? (profile.isActive ? "Local profile · active auth" : "Ready to switch"), x: 24, y: 44, width: 286, height: 18, size: 12, weight: .medium, color: PanelPalette.muted))
+        if profile.isActive {
+            view.addSubview(PillView(text: "Active", frame: NSRect(x: 338, y: 18, width: 64, height: 24), fill: PanelPalette.successFill, textColor: PanelPalette.successText))
+        } else {
+            let button = StyledButton(title: "Switch", style: .primary, target: target, action: #selector(AppDelegate.switchProfile(_:)))
+            button.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
+            button.frame = NSRect(x: 338, y: 24, width: 66, height: 30)
+            view.addSubview(button)
+        }
         return view
     }
 
     private func rounded(frame: NSRect, active: Bool) -> NSView {
-        let view = FlippedRoundedView(frame: frame)
-        view.wantsLayer = true
-        view.layer?.cornerRadius = 10
-        view.layer?.borderWidth = 1
-        view.layer?.borderColor = (active ? NSColor.systemGreen : NSColor.separatorColor).cgColor
-        view.layer?.backgroundColor = (active ? NSColor.systemGreen.withAlphaComponent(0.12) : NSColor.controlBackgroundColor).cgColor
-        return view
+        CardView(
+            frame: frame,
+            fill: active ? PanelPalette.activeFill : .white,
+            stroke: active ? PanelPalette.blue : PanelPalette.border,
+            borderWidth: active ? 2 : 1.3
+        )
     }
 
     private func label(_ text: String, x: CGFloat, y: CGFloat, width: CGFloat, height: CGFloat, size: CGFloat, weight: NSFont.Weight, color: NSColor = .labelColor, lines: Int = 1) -> NSTextField {
@@ -347,13 +348,108 @@ final class ProfilePanelView: NSView {
     }
 }
 
-final class FlippedRoundedView: NSView {
+private enum PanelPalette {
+    static let background = rgb(0xF8FAFC)
+    static let text = rgb(0x111827)
+    static let muted = rgb(0x6B7280)
+    static let border = rgb(0xD8DEE8)
+    static let blue = rgb(0x2563EB)
+    static let activeFill = rgb(0xEFF6FF)
+    static let successFill = rgb(0xDCFCE7)
+    static let successText = rgb(0x15803D)
+    static let secondaryFill = rgb(0xF3F4F6)
+}
+
+private func rgb(_ value: UInt32, alpha: CGFloat = 1) -> NSColor {
+    NSColor(
+        srgbRed: CGFloat((value >> 16) & 0xFF) / 255,
+        green: CGFloat((value >> 8) & 0xFF) / 255,
+        blue: CGFloat(value & 0xFF) / 255,
+        alpha: alpha
+    )
+}
+
+final class CardView: NSView {
+    init(frame: NSRect, fill: NSColor, stroke: NSColor, borderWidth: CGFloat) {
+        super.init(frame: frame)
+        wantsLayer = true
+        layer?.cornerRadius = 12
+        layer?.borderWidth = borderWidth
+        layer?.borderColor = stroke.cgColor
+        layer?.backgroundColor = fill.cgColor
+    }
+
+    required init?(coder: NSCoder) {
+        nil
+    }
+
     override var isFlipped: Bool {
         true
     }
 
     override var mouseDownCanMoveWindow: Bool {
         true
+    }
+}
+
+final class PillView: NSView {
+    init(text: String, frame: NSRect, fill: NSColor, textColor: NSColor) {
+        super.init(frame: frame)
+        wantsLayer = true
+        layer?.cornerRadius = frame.height / 2
+        layer?.backgroundColor = fill.cgColor
+
+        let label = NSTextField(labelWithString: text)
+        label.frame = bounds
+        label.alignment = .center
+        label.font = .systemFont(ofSize: 11, weight: .bold)
+        label.textColor = textColor
+        addSubview(label)
+    }
+
+    required init?(coder: NSCoder) {
+        nil
+    }
+
+    override var isFlipped: Bool {
+        true
+    }
+}
+
+final class StyledButton: NSButton {
+    enum ButtonStyle {
+        case primary
+        case secondary
+    }
+
+    init(title: String, style: ButtonStyle, target: AnyObject?, action: Selector?) {
+        super.init(frame: .zero)
+        self.title = title
+        self.target = target
+        self.action = action
+        setButtonType(.momentaryPushIn)
+        isBordered = false
+        wantsLayer = true
+        layer?.cornerRadius = style == .primary ? 9 : 8
+        layer?.borderWidth = style == .primary ? 0 : 1
+        layer?.borderColor = PanelPalette.border.cgColor
+        layer?.backgroundColor = (style == .primary ? PanelPalette.blue : PanelPalette.secondaryFill).cgColor
+        let color: NSColor = style == .primary ? .white : PanelPalette.text
+        attributedTitle = NSAttributedString(
+            string: title,
+            attributes: [
+                .font: NSFont.systemFont(ofSize: 12, weight: .bold),
+                .foregroundColor: color
+            ]
+        )
+    }
+
+    required init?(coder: NSCoder) {
+        nil
+    }
+
+    override var mouseDownCanMoveWindow: Bool {
+        false
     }
 }
 
