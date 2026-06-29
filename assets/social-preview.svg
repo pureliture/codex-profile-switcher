@@ -1,66 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
   <title id="title">Codex Profile Switcher social preview</title>
-  <desc id="desc">Hero visual showing a local-first Codex profile switcher where only auth.json changes, shared state stays, and rollback is ready.</desc>
+  <desc id="desc">Dark hero visual for a local-first Codex profile switcher where only auth.json changes.</desc>
   <defs>
-    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#58A6FF"/>
-    </marker>
-    <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#F2CC60"/>
-    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05070A"/>
+      <stop offset="0.52" stop-color="#081628"/>
+      <stop offset="1" stop-color="#062A2B"/>
+    </linearGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#142033" stroke-width="1"/>
+    </pattern>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
     <style>
-      .bg { fill: #0D1117; }
-      .panel { fill: #161B22; stroke: #30363D; stroke-width: 1.5; }
-      .card { fill: #0D1117; stroke: #30363D; stroke-width: 1.5; }
-      .card-blue { fill: #0B1F36; stroke: #58A6FF; stroke-width: 2.2; }
-      .card-green { fill: #0E2518; stroke: #3FB950; stroke-width: 2.2; }
-      .card-gold { fill: #2A2110; stroke: #F2CC60; stroke-width: 2; }
-      .title-text { fill: #E6EDF3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 54px; font-weight: 800; }
-      .subtitle { fill: #8B949E; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 20px; font-weight: 600; }
-      .label { fill: #E6EDF3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 23px; font-weight: 800; }
-      .small { fill: #8B949E; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 600; }
-      .tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 800; }
-      .blue { fill: #58A6FF; }
-      .green { fill: #3FB950; }
-      .gold { fill: #F2CC60; }
-      .line-blue { stroke: #58A6FF; stroke-width: 3; fill: none; marker-end: url(#arrow-blue); }
-      .line-gold { stroke: #F2CC60; stroke-width: 2.6; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrow-gold); }
-      .muted-line { stroke: #30363D; stroke-width: 1.3; }
+      .title { fill:#F8FAFC; font-family:sans-serif; font-size:58px; font-weight:800; }
+      .sub { fill:#8EA3BF; font-family:sans-serif; font-size:19px; font-weight:600; }
+      .tiny { fill:#7B8CA8; font-family:monospace; font-size:12px; font-weight:700; letter-spacing:1px; }
+      .card { fill:#0E1726; stroke:#23324A; stroke-width:1.4; }
+      .cardBlue { fill:#0B1B33; stroke:#3B82F6; stroke-width:2; }
+      .cardGreen { fill:#0B241C; stroke:#22C55E; stroke-width:2; }
+      .label { fill:#E2E8F0; font-family:sans-serif; font-size:20px; font-weight:800; }
+      .small { fill:#93A4BC; font-family:sans-serif; font-size:13px; font-weight:600; }
+      .mono { fill:#BAE6FD; font-family:monospace; font-size:14px; font-weight:800; }
+      .green { fill:#22C55E; }
+      .blue { fill:#3B82F6; }
+      .white { fill:#FFFFFF; }
+      .dark { fill:#05070A; }
     </style>
   </defs>
 
-  <rect class="bg" width="1280" height="640"/>
-  <text class="title-text" x="72" y="96">Codex Profile Switcher</text>
-  <text class="subtitle" x="76" y="135">Local-first profile switching. Only auth.json changes.</text>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect width="1280" height="640" fill="url(#grid)" opacity="0.65"/>
+  <rect x="0" y="0" width="1280" height="4" fill="#22C55E"/>
 
-  <rect class="panel" x="64" y="184" width="1152" height="360" rx="30"/>
+  <text class="tiny" x="72" y="76">LOCAL-FIRST · CODEX DESKTOP · AUTH SNAPSHOT</text>
+  <text class="title" x="70" y="138">Codex Profile Switcher</text>
+  <text class="sub" x="74" y="176">계정만 바꾸고, sessions · history · MCP · skills · config는 그대로 둡니다.</text>
 
-  <rect class="card" x="108" y="240" width="286" height="184" rx="22"/>
-  <text class="label" x="140" y="290">Official login</text>
-  <text class="small" x="140" y="326">temporary CODEX_HOME</text>
-  <text class="small" x="140" y="352">no OAuth implementation</text>
-  <rect class="card-blue" x="140" y="378" width="176" height="38" rx="12"/>
-  <text class="tag blue" x="164" y="402">profile snapshot</text>
+  <g transform="translate(792 92)" filter="url(#glow)">
+    <path d="M92 226C92 158 148 112 212 126C238 68 316 60 357 108C419 102 473 150 471 214C512 244 498 328 431 342C401 403 317 417 270 368C203 396 128 356 133 282C108 272 92 249 92 226Z" fill="#05090D"/>
+    <path d="M184 162H344V136L420 188L344 240V214H184Z" fill="#22C55E"/>
+    <path d="M398 396H238V422L162 370L238 318V344H398Z" fill="#3B82F6"/>
+    <path d="M213 224L254 202L330 290L254 378L213 356L274 290Z" fill="#FFFFFF"/>
+    <rect x="360" y="310" width="86" height="30" rx="15" fill="#FFFFFF"/>
+  </g>
 
-  <rect class="card-blue" x="505" y="222" width="270" height="220" rx="26"/>
-  <text class="label" x="552" y="278">auth.json only</text>
-  <text class="small" x="552" y="316">atomic replace</text>
-  <text class="small" x="552" y="344">backup before switch</text>
-  <line class="muted-line" x1="552" y1="372" x2="728" y2="372"/>
-  <text class="tag blue" x="552" y="406">No tokens shown</text>
+  <rect class="cardBlue" x="78" y="246" width="330" height="138" rx="18"/>
+  <text class="label" x="104" y="286">auth.json only</text>
+  <text class="small" x="104" y="318">active login file만 atomic replace</text>
+  <text class="mono" x="104" y="350">~/.codex/auth.json</text>
 
-  <rect class="card-green" x="888" y="240" width="284" height="184" rx="22"/>
-  <text class="label" x="920" y="290">Shared state stays</text>
-  <text class="tag green" x="920" y="326">config</text>
-  <text class="tag green" x="920" y="354">sessions</text>
-  <text class="tag green" x="920" y="382">history, MCP, skills</text>
+  <rect class="cardGreen" x="450" y="246" width="330" height="138" rx="18"/>
+  <text class="label" x="476" y="286">shared state stays</text>
+  <text class="small" x="476" y="318">config, sessions, history, MCP, skills 유지</text>
+  <text class="mono" x="476" y="350">no config writer</text>
 
-  <path class="line-blue" d="M394 332H502"/>
-  <path class="line-blue" d="M775 332H885"/>
-
-  <path class="line-gold" d="M640 444C600 500 468 498 336 430"/>
-  <rect class="card-gold" x="500" y="468" width="280" height="52" rx="17"/>
-  <text class="tag gold" x="584" y="501">Rollback ready</text>
-
-  <text class="small" x="76" y="594">Source-first local tool. App Store registration is not required.</text>
+  <rect class="card" x="78" y="420" width="702" height="92" rx="18"/>
+  <text class="tiny" x="104" y="454">BLOCKED SURFACE</text>
+  <text class="small" x="104" y="482">codex-auth · usage meter · reset credit · API key mode · auto-switch · update check</text>
 </svg>

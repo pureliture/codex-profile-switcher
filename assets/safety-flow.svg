@@ -1,92 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620" role="img" aria-labelledby="title desc">
-  <title id="title">Safe profile switch flow</title>
-  <desc id="desc">Safety flow showing baseline capture, target validation, active auth backup, atomic auth replacement, shared-state verification before restart, graceful restart, and rollback.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="620" viewBox="0 0 1280 620" role="img" aria-labelledby="title desc">
+  <title id="title">Safe auth switch flow</title>
+  <desc id="desc">Switch flow with baseline capture, snapshot validation, backup, atomic replace, shared-state verification, restart, and rollback path.</desc>
   <defs>
-    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#2563EB"/>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#142033" stroke-width="1"/>
+    </pattern>
+    <marker id="ok" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L12 6L0 12L3.5 6Z" fill="#22C55E"/>
     </marker>
-    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#DC2626"/>
-    </marker>
-    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
-      <path d="M0 0 10 5 0 10z" fill="#16A34A"/>
+    <marker id="bad" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0L12 6L0 12L3.5 6Z" fill="#EF4444"/>
     </marker>
     <style>
-      .bg { fill: #F8FAFC; }
-      .title-text { fill: #0F172A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 38px; font-weight: 800; }
-      .subtitle { fill: #475569; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 17px; font-weight: 650; }
-      .node { fill: #FFFFFF; stroke: #CBD5E1; stroke-width: 1.7; }
-      .node-important { fill: #EFF6FF; stroke: #2563EB; stroke-width: 3; }
-      .node-success { fill: #F0FDF4; stroke: #16A34A; stroke-width: 2; }
-      .rollback { fill: #FEF2F2; stroke: #DC2626; stroke-width: 2; }
-      .label { fill: #0F172A; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 18px; font-weight: 800; }
-      .small { fill: #475569; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 700; }
-      .tiny { fill: #64748B; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 700; }
-      .redtiny { fill: #B91C1C; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 800; }
-      .arrow-blue { stroke: #2563EB; stroke-width: 3; fill: none; marker-end: url(#arrow-blue); }
-      .arrow-green { stroke: #16A34A; stroke-width: 3; fill: none; marker-end: url(#arrow-green); }
-      .arrow-red { stroke: #DC2626; stroke-width: 2.4; fill: none; marker-end: url(#arrow-red); }
-      .dash-red { stroke: #DC2626; stroke-width: 1.8; stroke-dasharray: 6 6; fill: none; marker-end: url(#arrow-red); }
+      .bg { fill:#070B14; }
+      .title { fill:#F8FAFC; font-family:sans-serif; font-size:33px; font-weight:800; }
+      .sub { fill:#7386A2; font-family:sans-serif; font-size:14px; font-weight:600; }
+      .node { fill:#101A2B; stroke:#26364F; stroke-width:1.5; }
+      .hot { fill:#0B1B33; stroke:#3B82F6; stroke-width:2.2; }
+      .pass { fill:#0B241C; stroke:#22C55E; stroke-width:2; }
+      .fail { fill:#2A1116; stroke:#EF4444; stroke-width:2; }
+      .label { fill:#E2E8F0; font-family:sans-serif; font-size:15px; font-weight:800; }
+      .small { fill:#94A3B8; font-family:sans-serif; font-size:11.5px; font-weight:600; }
+      .red { fill:#FCA5A5; font-family:monospace; font-size:11px; font-weight:800; }
+      .arrow { stroke:#22C55E; stroke-width:2.5; fill:none; marker-end:url(#ok); }
+      .rollback { stroke:#EF4444; stroke-width:2; stroke-dasharray:7 7; fill:none; marker-end:url(#bad); }
     </style>
   </defs>
 
-  <rect class="bg" width="1400" height="620"/>
-  <text class="title-text" x="56" y="58">Safe profile switch</text>
-  <text class="subtitle" x="58" y="86">Only ~/.codex/auth.json is replaced; shared Codex state is checked before restart.</text>
+  <rect class="bg" width="1280" height="620"/>
+  <rect width="1280" height="620" fill="url(#grid)" opacity="0.68"/>
+  <rect x="0" y="0" width="1280" height="4" fill="#22C55E"/>
+  <text class="title" x="56" y="58">안전한 switch 흐름</text>
+  <text class="sub" x="58" y="84">Codex restart는 shared-state 검증을 통과한 뒤에만 실행됩니다.</text>
 
-  <rect class="node" x="58" y="154" width="178" height="96" rx="16"/>
-  <text class="label" x="94" y="190">Capture baseline</text>
-  <text class="small" x="94" y="216">shared-state</text>
-  <text class="small" x="94" y="236">fingerprint</text>
+  <g transform="translate(54 154)">
+    <rect class="node" x="0" y="0" width="154" height="92" rx="15"/>
+    <text class="label" x="28" y="36">Baseline</text>
+    <text class="small" x="28" y="60">shared state hash</text>
 
-  <rect class="node" x="276" y="154" width="178" height="96" rx="16"/>
-  <text class="label" x="315" y="190">Validate target</text>
-  <text class="small" x="318" y="216">profile snapshot</text>
-  <text class="small" x="318" y="236">must be safe</text>
+    <rect class="node" x="190" y="0" width="154" height="92" rx="15"/>
+    <text class="label" x="218" y="36">Validate</text>
+    <text class="small" x="218" y="60">safe auth snapshot</text>
 
-  <rect class="node" x="494" y="154" width="178" height="96" rx="16"/>
-  <text class="label" x="532" y="190">Backup active</text>
-  <text class="small" x="530" y="216">backup</text>
-  <text class="small" x="530" y="236">~/.codex/auth.json</text>
+    <rect class="node" x="380" y="0" width="154" height="92" rx="15"/>
+    <text class="label" x="414" y="36">Backup</text>
+    <text class="small" x="407" y="60">current auth.json</text>
 
-  <rect class="node-important" x="712" y="140" width="210" height="124" rx="18"/>
-  <text class="label" x="760" y="184">Atomic replace</text>
-  <text class="small" x="756" y="214">replace only</text>
-  <text class="small" x="756" y="236">~/.codex/auth.json</text>
-  <text class="tiny" x="756" y="256">scope limited to auth.json</text>
+    <rect class="hot" x="570" y="-14" width="184" height="120" rx="17"/>
+    <text class="label" x="612" y="34">Atomic replace</text>
+    <text class="small" x="608" y="60">only ~/.codex/auth.json</text>
+    <text class="small" x="608" y="82">no shared-state write</text>
 
-  <rect class="node" x="964" y="154" width="178" height="96" rx="16"/>
-  <text class="label" x="999" y="190">Verify state</text>
-  <text class="small" x="1007" y="216">before restart</text>
-  <text class="small" x="1007" y="236">fail closed</text>
+    <rect class="node" x="790" y="0" width="154" height="92" rx="15"/>
+    <text class="label" x="830" y="36">Verify</text>
+    <text class="small" x="822" y="60">before restart</text>
 
-  <rect class="node-success" x="1182" y="154" width="178" height="96" rx="16"/>
-  <text class="label" x="1218" y="190">Graceful restart</text>
-  <text class="small" x="1233" y="216">restart Codex</text>
-  <text class="small" x="1233" y="236">after verify</text>
+    <rect class="pass" x="980" y="0" width="154" height="92" rx="15"/>
+    <text class="label" x="1018" y="36">Restart</text>
+    <text class="small" x="1014" y="60">Codex Desktop</text>
 
-  <path class="arrow-blue" d="M236 202H273"/>
-  <path class="arrow-blue" d="M454 202H491"/>
-  <path class="arrow-blue" d="M672 202H709"/>
-  <path class="arrow-blue" d="M922 202H961"/>
-  <path class="arrow-green" d="M1142 202H1179"/>
+    <path class="arrow" d="M154 46H187"/>
+    <path class="arrow" d="M344 46H377"/>
+    <path class="arrow" d="M534 46H567"/>
+    <path class="arrow" d="M754 46H787"/>
+    <path class="arrow" d="M944 46H977"/>
 
-  <rect class="rollback" x="260" y="366" width="880" height="84" rx="18"/>
-  <text class="label" x="538" y="402">rollback: restore backup auth.json</text>
-  <text class="small" x="506" y="428">before restart when validation, replace, or post-check fails</text>
+    <rect class="fail" x="238" y="214" width="658" height="78" rx="18"/>
+    <text class="label" x="452" y="248">Rollback before restart</text>
+    <text class="small" x="386" y="272">validation, replace, or post-check failure restores previous active auth</text>
 
-  <path class="dash-red" d="M365 250V362"/>
-  <text class="redtiny" x="300" y="322">validation failed</text>
+    <path class="rollback" d="M267 92V210"/>
+    <text class="red" x="214" y="168">bad profile</text>
+    <path class="rollback" d="M662 106V210"/>
+    <text class="red" x="606" y="168">replace fail</text>
+    <path class="rollback" d="M867 92V210"/>
+    <text class="red" x="810" y="168">state drift</text>
+  </g>
 
-  <path class="dash-red" d="M817 264V362"/>
-  <text class="redtiny" x="762" y="322">replace failed</text>
-
-  <path class="dash-red" d="M1053 250V362"/>
-  <text class="redtiny" x="986" y="322">post-check failed</text>
-
-  <path class="arrow-red" d="M590 450C440 494 255 452 147 255"/>
-  <text class="redtiny" x="300" y="505">restore previous active auth</text>
-
-  <path class="arrow-green" d="M1140 408C1230 380 1271 312 1271 253"/>
-  <text class="tiny" x="1158" y="368">verified path only</text>
+  <rect class="node" x="54" y="510" width="1172" height="52" rx="14"/>
+  <text class="small" x="80" y="542">불변식: profile switch는 계정 auth만 바꾼다. config, sessions, history, MCP, skills, plugins는 같은 workspace를 계속 공유한다.</text>
 </svg>

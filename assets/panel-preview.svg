@@ -1,56 +1,65 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
-  <title id="title">Codex Profile Switcher panel mock preview</title>
-  <desc id="desc">Demo-data mock preview of a macOS menu-bar popover showing Personal and Enterprise profile cards without real account data.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="560" viewBox="0 0 920 560" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Profile Switcher window preview</title>
+  <desc id="desc">Mock preview of the macOS utility window with profile cards and auth-only switch controls.</desc>
   <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05070A"/>
+      <stop offset="1" stop-color="#0A2530"/>
+    </linearGradient>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#1F2937" flood-opacity="0.16"/>
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#000000" flood-opacity="0.35"/>
     </filter>
     <style>
-      .bg { fill: #F5F6F8; }
-      .panel { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.5; filter: url(#shadow); }
-      .notch { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.4; }
-      .title-text { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 28px; font-weight: 800; }
-      .label { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 19px; font-weight: 800; }
-      .small { fill: #6B7280; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 650; }
-      .caption { fill: #6B7280; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 650; }
-      .card { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.4; }
-      .card-active { fill: #EFF6FF; stroke: #2563EB; stroke-width: 2; }
-      .accent { fill: #2563EB; }
-      .pill { fill: #DBEAFE; }
-      .pill-text { fill: #2563EB; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 800; }
-      .button-primary { fill: #2563EB; }
-      .button-secondary { fill: #F3F4F6; stroke: #D7DAE0; stroke-width: 1.2; }
-      .button-text { fill: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 800; }
-      .button-secondary-text { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 800; }
-      .icon { fill: none; stroke: #6B7280; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+      .grid { stroke:#142033; stroke-width:1; }
+      .window { fill:#F8FAFC; stroke:#CBD5E1; stroke-width:1.4; filter:url(#shadow); }
+      .titlebar { fill:#EEF2F7; }
+      .dotR { fill:#FF5F57; }
+      .dotY { fill:#FFBD2E; }
+      .dotG { fill:#28C840; }
+      .title { fill:#111827; font-family:sans-serif; font-size:20px; font-weight:800; }
+      .small { fill:#6B7280; font-family:sans-serif; font-size:12px; font-weight:600; }
+      .card { fill:#FFFFFF; stroke:#D8DEE8; stroke-width:1.4; }
+      .active { fill:#EFF6FF; stroke:#3B82F6; stroke-width:2; }
+      .label { fill:#111827; font-family:sans-serif; font-size:17px; font-weight:800; }
+      .button { fill:#2563EB; }
+      .buttonText { fill:#FFFFFF; font-family:sans-serif; font-size:12px; font-weight:800; }
+      .pill { fill:#DCFCE7; }
+      .pillText { fill:#15803D; font-family:sans-serif; font-size:11px; font-weight:800; }
+      .mutedBtn { fill:#F3F4F6; stroke:#D8DEE8; stroke-width:1.2; }
+      .mutedText { fill:#111827; font-family:sans-serif; font-size:12px; font-weight:800; }
     </style>
   </defs>
 
-  <rect class="bg" width="720" height="420"/>
-  <rect class="notch" x="350" y="42" width="22" height="22" rx="4" transform="rotate(45 361 53)"/>
-  <rect class="panel" x="150" y="54" width="420" height="318" rx="24"/>
+  <rect width="920" height="560" fill="url(#bg)"/>
+  <g opacity="0.55">
+    <path class="grid" d="M0 48H920M0 96H920M0 144H920M0 192H920M0 240H920M0 288H920M0 336H920M0 384H920M0 432H920M0 480H920M0 528H920"/>
+    <path class="grid" d="M48 0V560M96 0V560M144 0V560M192 0V560M240 0V560M288 0V560M336 0V560M384 0V560M432 0V560M480 0V560M528 0V560M576 0V560M624 0V560M672 0V560M720 0V560M768 0V560M816 0V560M864 0V560"/>
+  </g>
 
-  <text class="title-text" x="184" y="107">Codex Profiles</text>
-  <rect class="button-secondary" x="476" y="80" width="48" height="32" rx="11"/>
-  <path class="icon" d="M498 91a9 9 0 1 1-2.4 6.4"/>
-  <path class="icon" d="M497 87v7h7"/>
+  <rect class="window" x="220" y="82" width="480" height="384" rx="16"/>
+  <path class="titlebar" d="M220 98C220 89 227 82 236 82H684C693 82 700 89 700 98V128H220Z"/>
+  <circle class="dotR" cx="244" cy="106" r="6"/>
+  <circle class="dotY" cx="266" cy="106" r="6"/>
+  <circle class="dotG" cx="288" cy="106" r="6"/>
+  <text class="small" x="366" y="111">Codex Profile Switcher</text>
 
-  <rect class="card-active" x="184" y="136" width="352" height="84" rx="16"/>
-  <rect class="accent" x="184" y="136" width="6" height="84" rx="3"/>
-  <text class="label" x="210" y="168">Personal</text>
-  <text class="small" x="210" y="193">Local profile</text>
-  <rect class="pill" x="430" y="151" width="70" height="24" rx="12"/>
-  <text class="pill-text" x="447" y="168">Active</text>
-  <rect class="button-secondary" x="416" y="181" width="84" height="28" rx="10"/>
-  <text class="button-secondary-text" x="439" y="200">Switch</text>
+  <text class="title" x="246" y="164">Codex Profiles</text>
+  <text class="small" x="246" y="190">Only auth.json changes. Shared Codex state stays untouched.</text>
 
-  <rect class="card" x="184" y="236" width="352" height="84" rx="16"/>
-  <text class="label" x="210" y="268">Enterprise</text>
-  <text class="small" x="210" y="293">Available</text>
-  <rect class="button-primary" x="416" y="261" width="84" height="30" rx="10"/>
-  <text class="button-text" x="439" y="281">Switch</text>
+  <rect class="active" x="246" y="218" width="428" height="78" rx="12"/>
+  <text class="label" x="268" y="250">Personal</text>
+  <text class="small" x="268" y="273">Local profile · active auth</text>
+  <rect class="pill" x="584" y="236" width="64" height="24" rx="12"/>
+  <text class="pillText" x="600" y="253">Active</text>
 
-  <rect class="button-secondary" x="184" y="334" width="118" height="32" rx="10"/>
-  <text class="button-secondary-text" x="210" y="355">Add Profile</text>
-  <text class="caption" x="390" y="355">Demo data mock preview</text>
+  <rect class="card" x="246" y="314" width="428" height="78" rx="12"/>
+  <text class="label" x="268" y="346">Enterprise</text>
+  <text class="small" x="268" y="369">Ready to switch</text>
+  <rect class="button" x="584" y="338" width="66" height="30" rx="9"/>
+  <text class="buttonText" x="600" y="358">Switch</text>
+
+  <rect class="mutedBtn" x="246" y="414" width="112" height="30" rx="9"/>
+  <text class="mutedText" x="270" y="434">Add Profile</text>
+  <rect class="mutedBtn" x="598" y="414" width="76" height="30" rx="9"/>
+  <text class="mutedText" x="622" y="434">Close</text>
 </svg>
