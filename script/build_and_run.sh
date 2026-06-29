@@ -16,7 +16,7 @@ APP_BINARY="$APP_MACOS/$APP_NAME"
 APP_RESOURCES="$APP_CONTENTS/Resources"
 INFO_PLIST="$APP_CONTENTS/Info.plist"
 ICON_NAME="AppIcon"
-ICON_SOURCE="$ROOT_DIR/assets/app-icon.svg"
+ICON_FILE="$ROOT_DIR/assets/$ICON_NAME.icns"
 
 cd "$ROOT_DIR"
 
@@ -32,20 +32,7 @@ mkdir -p "$APP_MACOS" "$APP_RESOURCES"
 cp "$BUILD_BINARY" "$APP_BINARY"
 chmod +x "$APP_BINARY"
 
-make_icon() {
-  local iconset="$APP_RESOURCES/$ICON_NAME.iconset"
-  rm -rf "$iconset"
-  mkdir -p "$iconset"
-  for size in 16 32 128 256 512; do
-    sips -s format png -z "$size" "$size" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}.png" >/dev/null
-    local double=$((size * 2))
-    sips -s format png -z "$double" "$double" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
-  done
-  iconutil -c icns "$iconset" -o "$APP_RESOURCES/$ICON_NAME.icns"
-  rm -rf "$iconset"
-}
-
-make_icon
+cp "$ICON_FILE" "$APP_RESOURCES/$ICON_NAME.icns"
 
 cat >"$INFO_PLIST" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -61,7 +48,7 @@ cat >"$INFO_PLIST" <<PLIST
   <key>CFBundleDisplayName</key>
   <string>$APP_NAME</string>
   <key>CFBundleIconFile</key>
-  <string>$ICON_NAME</string>
+  <string>$ICON_NAME.icns</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>LSMinimumSystemVersion</key>

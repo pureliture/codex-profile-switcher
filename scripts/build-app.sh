@@ -11,7 +11,7 @@ CONTENTS="$APP/Contents"
 MACOS="$CONTENTS/MacOS"
 RESOURCES="$CONTENTS/Resources"
 ICON_NAME="AppIcon"
-ICON_SOURCE="$ROOT/assets/app-icon.svg"
+ICON_FILE="$ROOT/assets/$ICON_NAME.icns"
 
 cd "$ROOT"
 swift build -c "$CONFIG" --product "$PRODUCT"
@@ -22,20 +22,7 @@ cp "$ROOT/.build/$CONFIG/$PRODUCT" "$MACOS/$APP_NAME"
 cp "$ROOT/LICENSE" "$RESOURCES/LICENSE"
 cp "$ROOT/NOTICE.md" "$RESOURCES/NOTICE.md"
 
-make_icon() {
-  local iconset="$RESOURCES/$ICON_NAME.iconset"
-  rm -rf "$iconset"
-  mkdir -p "$iconset"
-  for size in 16 32 128 256 512; do
-    sips -s format png -z "$size" "$size" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}.png" >/dev/null
-    local double=$((size * 2))
-    sips -s format png -z "$double" "$double" "$ICON_SOURCE" --out "$iconset/icon_${size}x${size}@2x.png" >/dev/null
-  done
-  iconutil -c icns "$iconset" -o "$RESOURCES/$ICON_NAME.icns"
-  rm -rf "$iconset"
-}
-
-make_icon
+cp "$ICON_FILE" "$RESOURCES/$ICON_NAME.icns"
 
 cat > "$CONTENTS/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -51,7 +38,7 @@ cat > "$CONTENTS/Info.plist" <<'PLIST'
   <key>CFBundleDisplayName</key>
   <string>Codex Profile Switcher</string>
   <key>CFBundleIconFile</key>
-  <string>AppIcon</string>
+  <string>AppIcon.icns</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>

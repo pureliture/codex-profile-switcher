@@ -22,6 +22,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         item.button?.action = #selector(togglePanel)
         statusItem = item
         rebuildMenu()
+        DispatchQueue.main.async { self.showPanel() }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        showPanel()
+        return false
     }
 
     private func title() -> String {
@@ -52,14 +58,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem?.menu = menu
-        statusItem?.button?.title = title()
-        statusItem?.button?.target = self
-        statusItem?.button?.action = #selector(togglePanel)
+        configureStatusButton()
         statusItem?.menu = nil
     }
 
     @objc private func refreshProfiles() {
-        statusItem?.button?.title = title()
+        configureStatusButton()
         panel?.contentView = ProfilePanelView(state: panelState(), target: self)
     }
 
@@ -68,12 +72,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             panel?.orderOut(nil)
             return
         }
+        showPanel()
+    }
+
+    private func showPanel() {
         let panel = panel ?? makePanel()
         self.panel = panel
         panel.contentView = ProfilePanelView(state: panelState(), target: self)
         position(panel)
         panel.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func configureStatusButton() {
+        guard let button = statusItem?.button else { return }
+        let image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath", accessibilityDescription: "Codex Profile Switcher")
+        image?.isTemplate = true
+        button.image = image
+        button.imagePosition = .imageLeading
+        button.title = " " + title()
+        button.toolTip = "Codex Profile Switcher"
+        button.target = self
+        button.action = #selector(togglePanel)
     }
 
     private func makePanel() -> NSPanel {
@@ -92,7 +112,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func position(_ panel: NSPanel) {
-        guard let button = statusItem?.button, let window = button.window else { return }
+        guard let button = statusItem?.button, let window = button.window else {
+            if let screen = NSScreen.main {
+                let frame = screen.visibleFrame
+                panel.setFrameOrigin(NSPoint(x: frame.maxX - panel.frame.width - 18, y: frame.maxY - panel.frame.height - 18))
+            }
+            return
+        }
         let rect = window.convertToScreen(button.convert(button.bounds, to: nil))
         panel.setFrameOrigin(NSPoint(x: rect.midX - panel.frame.width / 2, y: rect.minY - panel.frame.height - 10))
     }

@@ -145,7 +145,7 @@ cd codex-profile-switcher
 ./script/build_and_run.sh --verify
 ```
 
-앱이 뜨면 각 팀원은 자기 Mac에서 직접 profile을 추가합니다.
+앱을 실행하면 profile panel이 바로 열립니다. 이후에는 macOS menu bar의 Codex Profile Switcher 아이콘으로 다시 열 수 있습니다. 각 팀원은 자기 Mac에서 직접 profile을 추가합니다.
 
 1. `Add Profile`
 2. 개인 계정으로 Codex login
