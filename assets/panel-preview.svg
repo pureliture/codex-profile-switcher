@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Profile Switcher panel mock preview</title>
+  <desc id="desc">Demo-data mock preview of a macOS menu-bar popover showing Personal and Enterprise profile cards without real account data.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#1F2937" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .bg { fill: #F5F6F8; }
+      .panel { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.5; filter: url(#shadow); }
+      .notch { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.4; }
+      .title-text { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 28px; font-weight: 800; }
+      .label { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 19px; font-weight: 800; }
+      .small { fill: #6B7280; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 650; }
+      .caption { fill: #6B7280; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 650; }
+      .card { fill: #FFFFFF; stroke: #D7DAE0; stroke-width: 1.4; }
+      .card-active { fill: #EFF6FF; stroke: #2563EB; stroke-width: 2; }
+      .accent { fill: #2563EB; }
+      .pill { fill: #DBEAFE; }
+      .pill-text { fill: #2563EB; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 800; }
+      .button-primary { fill: #2563EB; }
+      .button-secondary { fill: #F3F4F6; stroke: #D7DAE0; stroke-width: 1.2; }
+      .button-text { fill: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 800; }
+      .button-secondary-text { fill: #1F2328; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px; font-weight: 800; }
+      .icon { fill: none; stroke: #6B7280; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="720" height="420"/>
+  <rect class="notch" x="350" y="42" width="22" height="22" rx="4" transform="rotate(45 361 53)"/>
+  <rect class="panel" x="150" y="54" width="420" height="318" rx="24"/>
+
+  <text class="title-text" x="184" y="107">Codex Profiles</text>
+  <rect class="button-secondary" x="476" y="80" width="48" height="32" rx="11"/>
+  <path class="icon" d="M498 91a9 9 0 1 1-2.4 6.4"/>
+  <path class="icon" d="M497 87v7h7"/>
+
+  <rect class="card-active" x="184" y="136" width="352" height="84" rx="16"/>
+  <rect class="accent" x="184" y="136" width="6" height="84" rx="3"/>
+  <text class="label" x="210" y="168">Personal</text>
+  <text class="small" x="210" y="193">Local profile</text>
+  <rect class="pill" x="430" y="151" width="70" height="24" rx="12"/>
+  <text class="pill-text" x="447" y="168">Active</text>
+  <rect class="button-secondary" x="416" y="181" width="84" height="28" rx="10"/>
+  <text class="button-secondary-text" x="439" y="200">Switch</text>
+
+  <rect class="card" x="184" y="236" width="352" height="84" rx="16"/>
+  <text class="label" x="210" y="268">Enterprise</text>
+  <text class="small" x="210" y="293">Available</text>
+  <rect class="button-primary" x="416" y="261" width="84" height="30" rx="10"/>
+  <text class="button-text" x="439" y="281">Switch</text>
+
+  <rect class="button-secondary" x="184" y="334" width="118" height="32" rx="10"/>
+  <text class="button-secondary-text" x="210" y="355">Add Profile</text>
+  <text class="caption" x="390" y="355">Demo data mock preview</text>
+</svg>

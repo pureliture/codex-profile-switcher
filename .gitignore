@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+.harnesskit/optimal-response-out/
+dist/
+DerivedData/
+*.xcuserstate
+.DS_Store

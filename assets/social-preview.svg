@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Profile Switcher social preview</title>
+  <desc id="desc">Hero visual showing a local-first Codex profile switcher where only auth.json changes, shared state stays, and rollback is ready.</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#58A6FF"/>
+    </marker>
+    <marker id="arrow-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#F2CC60"/>
+    </marker>
+    <style>
+      .bg { fill: #0D1117; }
+      .panel { fill: #161B22; stroke: #30363D; stroke-width: 1.5; }
+      .card { fill: #0D1117; stroke: #30363D; stroke-width: 1.5; }
+      .card-blue { fill: #0B1F36; stroke: #58A6FF; stroke-width: 2.2; }
+      .card-green { fill: #0E2518; stroke: #3FB950; stroke-width: 2.2; }
+      .card-gold { fill: #2A2110; stroke: #F2CC60; stroke-width: 2; }
+      .title-text { fill: #E6EDF3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 54px; font-weight: 800; }
+      .subtitle { fill: #8B949E; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 20px; font-weight: 600; }
+      .label { fill: #E6EDF3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 23px; font-weight: 800; }
+      .small { fill: #8B949E; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 600; }
+      .tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 800; }
+      .blue { fill: #58A6FF; }
+      .green { fill: #3FB950; }
+      .gold { fill: #F2CC60; }
+      .line-blue { stroke: #58A6FF; stroke-width: 3; fill: none; marker-end: url(#arrow-blue); }
+      .line-gold { stroke: #F2CC60; stroke-width: 2.6; fill: none; stroke-dasharray: 8 8; marker-end: url(#arrow-gold); }
+      .muted-line { stroke: #30363D; stroke-width: 1.3; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1280" height="640"/>
+  <text class="title-text" x="72" y="96">Codex Profile Switcher</text>
+  <text class="subtitle" x="76" y="135">Local-first profile switching. Only auth.json changes.</text>
+
+  <rect class="panel" x="64" y="184" width="1152" height="360" rx="30"/>
+
+  <rect class="card" x="108" y="240" width="286" height="184" rx="22"/>
+  <text class="label" x="140" y="290">Official login</text>
+  <text class="small" x="140" y="326">temporary CODEX_HOME</text>
+  <text class="small" x="140" y="352">no OAuth implementation</text>
+  <rect class="card-blue" x="140" y="378" width="176" height="38" rx="12"/>
+  <text class="tag blue" x="164" y="402">profile snapshot</text>
+
+  <rect class="card-blue" x="505" y="222" width="270" height="220" rx="26"/>
+  <text class="label" x="552" y="278">auth.json only</text>
+  <text class="small" x="552" y="316">atomic replace</text>
+  <text class="small" x="552" y="344">backup before switch</text>
+  <line class="muted-line" x1="552" y1="372" x2="728" y2="372"/>
+  <text class="tag blue" x="552" y="406">No tokens shown</text>
+
+  <rect class="card-green" x="888" y="240" width="284" height="184" rx="22"/>
+  <text class="label" x="920" y="290">Shared state stays</text>
+  <text class="tag green" x="920" y="326">config</text>
+  <text class="tag green" x="920" y="354">sessions</text>
+  <text class="tag green" x="920" y="382">history, MCP, skills</text>
+
+  <path class="line-blue" d="M394 332H502"/>
+  <path class="line-blue" d="M775 332H885"/>
+
+  <path class="line-gold" d="M640 444C600 500 468 498 336 430"/>
+  <rect class="card-gold" x="500" y="468" width="280" height="52" rx="17"/>
+  <text class="tag gold" x="584" y="501">Rollback ready</text>
+
+  <text class="small" x="76" y="594">Source-first local tool. App Store registration is not required.</text>
+</svg>

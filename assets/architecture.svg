@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Profile Switcher Architecture</title>
+  <desc id="desc">Architecture diagram showing user surface, isolated profile workspace, and active Codex runtime with verified auth.json replacement.</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#2563EB"/>
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#0F766E"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#B45309"/>
+    </marker>
+    <style>
+      .bg { fill: #F7F9FC; }
+      .lane { fill: #FFFFFF; stroke: #CBD5E1; stroke-width: 1.5; }
+      .lane-title { fill: #475569; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 800; }
+      .title-text { fill: #172033; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 32px; font-weight: 800; }
+      .subtitle { fill: #475569; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; font-weight: 600; }
+      .node { fill: #FFFFFF; stroke: #CBD5E1; stroke-width: 1.6; }
+      .node-blue { fill: #EFF6FF; stroke: #2563EB; stroke-width: 2; }
+      .node-teal { fill: #ECFDF5; stroke: #0F766E; stroke-width: 2; }
+      .node-amber { fill: #FFFBEB; stroke: #B45309; stroke-width: 2; }
+      .temp { fill: #F8FAFC; stroke: #94A3B8; stroke-width: 1.8; stroke-dasharray: 7 7; }
+      .label { fill: #172033; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 16px; font-weight: 800; }
+      .small { fill: #475569; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 12px; font-weight: 650; }
+      .tiny { fill: #64748B; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 11px; font-weight: 700; }
+      .arrow-blue { stroke: #2563EB; stroke-width: 2.5; fill: none; marker-end: url(#arrow-blue); }
+      .arrow-teal { stroke: #0F766E; stroke-width: 2.5; fill: none; marker-end: url(#arrow-teal); }
+      .arrow-amber { stroke: #B45309; stroke-width: 2.4; fill: none; marker-end: url(#arrow-amber); }
+      .dash { stroke-dasharray: 6 6; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="700"/>
+  <text class="title-text" x="48" y="56">Codex Profile Switcher Architecture</text>
+  <text class="subtitle" x="50" y="84">Profiles are isolated, verified, then atomically applied to the active Codex auth file.</text>
+
+  <rect class="lane" x="48" y="120" width="292" height="520" rx="20"/>
+  <rect class="lane" x="368" y="120" width="450" height="520" rx="20"/>
+  <rect class="lane" x="846" y="120" width="306" height="520" rx="20"/>
+
+  <text class="lane-title" x="78" y="154">User Surface</text>
+  <text class="lane-title" x="398" y="154">Isolated Profile Workspace</text>
+  <text class="lane-title" x="876" y="154">Active Codex Runtime</text>
+
+  <rect class="node-blue" x="90" y="230" width="208" height="86" rx="15"/>
+  <text class="label" x="122" y="264">App / Menu Bar</text>
+  <text class="small" x="122" y="288">profile cards and actions</text>
+
+  <rect class="node-teal" x="410" y="178" width="230" height="84" rx="15"/>
+  <text class="label" x="440" y="212">OfficialLoginCoordinator</text>
+  <text class="small" x="440" y="236">official login only</text>
+
+  <rect class="temp" x="408" y="292" width="370" height="154" rx="16"/>
+  <text class="tiny" x="432" y="318">temporary CODEX_HOME</text>
+
+  <rect class="node" x="432" y="340" width="145" height="70" rx="12"/>
+  <text class="label" x="462" y="369">ProfileStore</text>
+  <text class="small" x="462" y="391">metadata only</text>
+
+  <rect class="node" x="604" y="332" width="150" height="36" rx="10"/>
+  <text class="small" x="638" y="355">registry.json</text>
+  <rect class="node" x="604" y="382" width="150" height="42" rx="10"/>
+  <text class="small" x="620" y="407">profiles/&lt;uuid&gt;/auth</text>
+
+  <rect class="node-teal" x="410" y="502" width="368" height="94" rx="16"/>
+  <text class="label" x="438" y="532">ProfileSwitchService</text>
+  <text class="small" x="438" y="555">verify, transact, restart</text>
+  <rect class="node" x="586" y="518" width="166" height="28" rx="8"/>
+  <text class="tiny" x="606" y="537">SharedStateVerifier</text>
+  <rect class="node" x="586" y="558" width="166" height="28" rx="8"/>
+  <text class="tiny" x="604" y="577">AuthFileTransaction</text>
+
+  <rect class="node-blue" x="888" y="210" width="222" height="82" rx="15"/>
+  <text class="label" x="920" y="243">~/.codex/auth.json</text>
+  <text class="small" x="920" y="267">active login file</text>
+
+  <rect class="node-amber" x="888" y="360" width="222" height="72" rx="15"/>
+  <text class="label" x="942" y="390">BackupStore</text>
+  <text class="small" x="938" y="413">restore point</text>
+
+  <rect class="node-blue" x="888" y="510" width="222" height="72" rx="15"/>
+  <text class="label" x="936" y="540">CodexLauncher</text>
+  <text class="small" x="925" y="563">reopen Codex Desktop</text>
+
+  <path class="arrow-blue" d="M298 262C342 262 358 220 407 220"/>
+  <path class="arrow-teal" d="M525 262V289"/>
+  <path class="arrow-teal" d="M577 375H601"/>
+  <path class="arrow-blue" d="M298 292C350 388 354 530 407 548"/>
+  <path class="arrow-teal" d="M778 548C820 548 832 260 885 252"/>
+  <path class="arrow-amber" d="M926 292C880 322 874 374 885 392"/>
+  <path class="arrow-blue" d="M999 432V507"/>
+  <path class="arrow-teal dash" d="M778 528C818 505 836 398 885 397"/>
+  <text class="tiny" x="398" y="628">Only profile snapshots enter the app store. Only the verified auth.json replacement reaches active Codex runtime.</text>
+</svg>
