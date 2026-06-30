@@ -229,6 +229,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    @objc fileprivate func removeProfile(_ sender: NSButton) {
+        guard let raw = sender.identifier?.rawValue, let id = UUID(uuidString: raw) else { return }
+        let label = (try? store.profile(id: id).label) ?? "profile"
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "Remove \(label)?"
+        alert.informativeText = "This deletes only the saved local profile snapshot. Your active Codex login and shared Codex state stay unchanged."
+        alert.addButton(withTitle: "Remove")
+        alert.addButton(withTitle: "Cancel")
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+
+        do {
+            try store.removeProfile(id: id)
+            refreshProfiles()
+        } catch CodexProfileSwitcherError.activeProfileRemovalBlocked {
+            showError(title: "Remove blocked", message: "Switch to another profile before removing the active profile.")
+        } catch {
+            showError(title: "Remove failed", message: "The selected profile could not be removed. Your active Codex account was not changed.")
+        }
+    }
+
     private func showError(title: String, message: String) {
         let alert = NSAlert()
         alert.messageText = title
@@ -314,8 +336,13 @@ final class ProfilePanelView: NSView {
         } else {
             let button = StyledButton(title: "Switch", style: .primary, target: target, action: #selector(AppDelegate.switchProfile(_:)))
             button.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
-            button.frame = NSRect(x: 338, y: 24, width: 66, height: 30)
+            button.frame = NSRect(x: 300, y: 24, width: 66, height: 30)
             view.addSubview(button)
+
+            let removeButton = IconButton(systemSymbolName: "trash", accessibilityLabel: "Remove \(profile.label)", target: target, action: #selector(AppDelegate.removeProfile(_:)))
+            removeButton.identifier = NSUserInterfaceItemIdentifier(profile.id.uuidString)
+            removeButton.frame = NSRect(x: 374, y: 24, width: 30, height: 30)
+            view.addSubview(removeButton)
         }
         return view
     }
@@ -463,6 +490,35 @@ final class StyledButton: NSButton {
                 .foregroundColor: color
             ]
         )
+    }
+
+    required init?(coder: NSCoder) {
+        nil
+    }
+
+    override var mouseDownCanMoveWindow: Bool {
+        false
+    }
+}
+
+final class IconButton: NSButton {
+    init(systemSymbolName: String, accessibilityLabel: String, target: AnyObject?, action: Selector?) {
+        super.init(frame: .zero)
+        self.target = target
+        self.action = action
+        setButtonType(.momentaryPushIn)
+        isBordered = false
+        wantsLayer = true
+        toolTip = accessibilityLabel
+        setAccessibilityLabel(accessibilityLabel)
+        layer?.cornerRadius = 8
+        layer?.borderWidth = 1
+        layer?.borderColor = PanelPalette.border.cgColor
+        layer?.backgroundColor = PanelPalette.secondaryFill.cgColor
+        image = NSImage(systemSymbolName: systemSymbolName, accessibilityDescription: accessibilityLabel)
+        image?.isTemplate = true
+        contentTintColor = PanelPalette.muted
+        imagePosition = .imageOnly
     }
 
     required init?(coder: NSCoder) {

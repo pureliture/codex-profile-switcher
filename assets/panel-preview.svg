@@ -23,6 +23,8 @@
       .label { fill:#111827; font-family:sans-serif; font-size:17px; font-weight:800; }
       .button { fill:#2563EB; }
       .buttonText { fill:#FFFFFF; font-family:sans-serif; font-size:12px; font-weight:800; }
+      .iconBtn { fill:#F3F4F6; stroke:#D8DEE8; stroke-width:1.2; }
+      .icon { fill:none; stroke:#6B7280; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
       .pill { fill:#DCFCE7; }
       .pillText { fill:#15803D; font-family:sans-serif; font-size:11px; font-weight:800; }
       .mutedBtn { fill:#F3F4F6; stroke:#D8DEE8; stroke-width:1.2; }
@@ -55,8 +57,10 @@
   <rect class="card" x="246" y="314" width="428" height="78" rx="12"/>
   <text class="label" x="268" y="346">Enterprise</text>
   <text class="small" x="268" y="369">Ready to switch</text>
-  <rect class="button" x="584" y="338" width="66" height="30" rx="9"/>
-  <text class="buttonText" x="600" y="358">Switch</text>
+  <rect class="button" x="546" y="338" width="66" height="30" rx="9"/>
+  <text class="buttonText" x="579" y="353" text-anchor="middle" dominant-baseline="middle">Switch</text>
+  <rect class="iconBtn" x="620" y="338" width="30" height="30" rx="8"/>
+  <path class="icon" d="M629 347H641M633 347V345H637V347M631 351L632 361H638L639 351M634 352V359M637 352V359"/>
 
   <rect class="mutedBtn" x="246" y="414" width="112" height="30" rx="9"/>
   <text class="mutedText" x="270" y="434">Add Profile</text>

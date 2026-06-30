@@ -6,6 +6,8 @@ struct CoreTestRunner {
     static func main() {
         let tests: [(String, () throws -> Void)] = [
             ("ProfileStore stores snapshots under UUID paths", testCreateProfileStoresSnapshotUnderUUIDPathAndRegistryMetadata),
+            ("ProfileStore removes inactive profile snapshots", testRemoveInactiveProfileDeletesSnapshotAndRegistryEntry),
+            ("ProfileStore blocks active profile removal", testRemoveActiveProfileIsBlocked),
             ("ProfileStore rejects invalid auth JSON", testRejectsInvalidAuthJSONBeforeCreatingProfile),
             ("ProfileStore rejects API-key auth JSON", testRejectsAPIKeyAuthJSONBeforeCreatingProfile),
             ("AuthFileTransaction replaces, backs up, and rolls back", testReplaceBacksUpActiveAuthAndCanRollback),
@@ -69,6 +71,41 @@ func testCreateProfileStoresSnapshotUnderUUIDPathAndRegistryMetadata() throws {
     try expect(registry.schemaVersion == 1, "schema version")
     try expect(registry.profiles.map(\.id) == [profile.id], "registry contains profile")
     try expect(try fixture.posixPermissions(fixture.appStateRoot.appendingPathComponent("registry.json")) == 0o600, "registry permission 0600")
+}
+
+func testRemoveInactiveProfileDeletesSnapshotAndRegistryEntry() throws {
+    let fixture = try TempFixture()
+    let store = ProfileStore(appStateRoot: fixture.appStateRoot)
+    let active = try store.createProfile(label: "Personal", email: nil, authJSON: fixture.validAuthJSON(accessToken: "active"))
+    let inactive = try store.createProfile(label: "Enterprise", email: nil, authJSON: fixture.validAuthJSON(accessToken: "inactive"))
+    try store.updateLastUsed(profileId: active.id)
+
+    let inactiveSnapshot = try store.snapshotURL(for: inactive)
+    let inactiveDirectory = inactiveSnapshot.deletingLastPathComponent()
+
+    try store.removeProfile(id: inactive.id)
+
+    let registry = try store.loadRegistry()
+    try expect(registry.profiles.map(\.id) == [active.id], "registry removes inactive profile")
+    try expect(registry.activeProfileId == active.id, "active profile remains active")
+    try expect(!FileManager.default.fileExists(atPath: inactiveDirectory.path), "profile snapshot directory removed")
+}
+
+func testRemoveActiveProfileIsBlocked() throws {
+    let fixture = try TempFixture()
+    let store = ProfileStore(appStateRoot: fixture.appStateRoot)
+    let active = try store.createProfile(label: "Personal", email: nil, authJSON: fixture.validAuthJSON(accessToken: "active"))
+    try store.updateLastUsed(profileId: active.id)
+
+    let activeSnapshot = try store.snapshotURL(for: active)
+
+    try expectThrows("active profile removal blocked") {
+        try store.removeProfile(id: active.id)
+    }
+
+    let registry = try store.loadRegistry()
+    try expect(registry.profiles.map(\.id) == [active.id], "active profile remains registered")
+    try expect(FileManager.default.fileExists(atPath: activeSnapshot.path), "active snapshot remains")
 }
 
 func testRejectsInvalidAuthJSONBeforeCreatingProfile() throws {

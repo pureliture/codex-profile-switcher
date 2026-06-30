@@ -12,6 +12,7 @@ public enum CodexProfileSwitcherError: Error, CustomStringConvertible, Equatable
     case realCodexHomeChanged
     case profileNotFound
     case rollbackUnavailable
+    case activeProfileRemovalBlocked
 
     public var description: String {
         switch self {
@@ -37,6 +38,8 @@ public enum CodexProfileSwitcherError: Error, CustomStringConvertible, Equatable
             return "profile not found"
         case .rollbackUnavailable:
             return "rollback unavailable"
+        case .activeProfileRemovalBlocked:
+            return "active profile removal blocked"
         }
     }
 }

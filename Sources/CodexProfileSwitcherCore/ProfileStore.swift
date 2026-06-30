@@ -91,4 +91,44 @@ public final class ProfileStore {
         registry.profiles[index].updatedAt = Date()
         try saveRegistry(registry)
     }
+
+    public func removeProfile(id: UUID) throws {
+        var registry = try loadRegistry()
+        guard let index = registry.profiles.firstIndex(where: { $0.id == id }) else {
+            throw CodexProfileSwitcherError.profileNotFound
+        }
+        guard registry.activeProfileId != id else {
+            throw CodexProfileSwitcherError.activeProfileRemovalBlocked
+        }
+
+        let profile = registry.profiles[index]
+        let snapshot = try snapshotURL(for: profile)
+        let profileDirectory = snapshot.deletingLastPathComponent()
+        guard profileDirectory.deletingLastPathComponent().lastPathComponent == "profiles",
+              profileDirectory.lastPathComponent == id.uuidString else {
+            throw CodexProfileSwitcherError.unsafePath("profile directory must match profile UUID")
+        }
+
+        let removalRoot = appStateRoot.appendingPathComponent("removed")
+        let tombstone = removalRoot.appendingPathComponent("\(id.uuidString)-\(UUID().uuidString)")
+        var movedSnapshot = false
+        if FileManager.default.fileExists(atPath: profileDirectory.path) {
+            try FileSecurity.ensureDirectory(removalRoot)
+            try FileManager.default.moveItem(at: profileDirectory, to: tombstone)
+            movedSnapshot = true
+        }
+
+        do {
+            registry.profiles.remove(at: index)
+            try saveRegistry(registry)
+            if movedSnapshot {
+                try? FileManager.default.removeItem(at: tombstone)
+            }
+        } catch {
+            if movedSnapshot && !FileManager.default.fileExists(atPath: profileDirectory.path) {
+                try? FileManager.default.moveItem(at: tombstone, to: profileDirectory)
+            }
+            throw error
+        }
+    }
 }
